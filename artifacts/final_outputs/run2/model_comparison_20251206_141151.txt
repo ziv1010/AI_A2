@@ -1,0 +1,4 @@
+LogisticRegression: accuracy = 0.798, f1 = 0.130
+RandomForest: accuracy = 0.999, f1 = 0.997
+GradientBoosting: accuracy = 0.998, f1 = 0.995
+Best model saved: RandomForest
