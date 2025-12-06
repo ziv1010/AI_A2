@@ -216,16 +216,19 @@ Actual Status: {actual}
 
 
 @tool
-def get_high_risk_customers(top_n: int = 10) -> str:
+def get_high_risk_customers(top_n: Optional[int] = None) -> str:
     """
     Get list of highest risk customers who are likely to churn.
 
     Args:
-        top_n: Number of top risk customers to return (default 10)
+        top_n: Number of top risk customers to return. If not provided, defaults to 10.
 
     Returns:
         List of high-risk customers with their details.
     """
+    # Handle None or invalid values
+    if top_n is None or not isinstance(top_n, int) or top_n <= 0:
+        top_n = 10
     try:
         model, encoders, error = load_model_and_prepare()
         if error:
@@ -273,16 +276,19 @@ def get_high_risk_customers(top_n: int = 10) -> str:
 
 
 @tool
-def get_low_risk_customers(top_n: int = 10) -> str:
+def get_low_risk_customers(top_n: Optional[int] = None) -> str:
     """
     Get list of lowest risk customers who are least likely to churn.
 
     Args:
-        top_n: Number of low risk customers to return (default 10)
+        top_n: Number of low risk customers to return. If not provided, defaults to 10.
 
     Returns:
         List of low-risk customers with their details.
     """
+    # Handle None or invalid values
+    if top_n is None or not isinstance(top_n, int) or top_n <= 0:
+        top_n = 10
     try:
         model, encoders, error = load_model_and_prepare()
         if error:

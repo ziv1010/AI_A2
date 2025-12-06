@@ -117,9 +117,9 @@ DATA: {DATA_DIR}
 ARTIFACTS: {ARTIFACTS_DIR}
 
 AVAILABLE TOOLS:
-- get_high_risk_customers(top_n=5): Get top N customers most likely to churn
-- get_low_risk_customers(top_n=5): Get top N customers least likely to churn
-- analyze_churn_factors(): Get feature importances and what drives churn
+- get_high_risk_customers: Pass top_n as integer (e.g., 5) to get N customers most likely to churn
+- get_low_risk_customers: Pass top_n as integer (e.g., 5) to get N customers least likely to churn
+- analyze_churn_factors: No parameters needed. Returns feature importances and what drives churn
 - run_python: Run custom Python code for analysis
 - save_artifact: Save reports to artifacts folder
 
@@ -133,9 +133,9 @@ WORKFLOW:
 5. Save a comprehensive final report
 
 EXAMPLE: If user asks "top 5 most likely and 5 least likely to churn + what factors":
-1. Call get_high_risk_customers(top_n=5) - gets 5 most likely to churn
-2. Call get_low_risk_customers(top_n=5) - gets 5 least likely to churn
-3. Call analyze_churn_factors() - explains the key drivers
+1. Call get_high_risk_customers with top_n=5
+2. Call get_low_risk_customers with top_n=5
+3. Call analyze_churn_factors
 
 Then SUMMARIZE the results clearly for the user:
 - List each high-risk customer with ID, name, churn probability, key attributes
