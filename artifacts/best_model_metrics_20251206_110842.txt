@@ -1,0 +1,5 @@
+Model        LogisticRegression
+Accuracy                  0.999
+Precision              0.997455
+Recall                 0.997455
+F1                     0.997455

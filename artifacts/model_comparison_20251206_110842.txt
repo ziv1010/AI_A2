@@ -1,0 +1,4 @@
+                Model  Accuracy  Precision    Recall        F1
+0  LogisticRegression     0.999   0.997455  0.997455  0.997455
+1        RandomForest     0.999   0.997455  0.997455  0.997455
+2    GradientBoosting     0.998   0.992405  0.997455  0.994924
