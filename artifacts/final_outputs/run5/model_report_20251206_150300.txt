@@ -1,0 +1,1 @@
+Model Comparison Report\n\nLogisticRegression: Accuracy=0.9985, F1=0.9963\nRandomForest: Accuracy=0.9985, F1=0.9963\nGradientBoosting: Accuracy=0.9980, F1=0.9951\n\nBest model saved: LogisticRegression (F1=0.9963) at artifacts/best_model.joblib

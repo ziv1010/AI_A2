@@ -1,0 +1,27 @@
+Top 5 Most Likely to Churn:
+1. CustomerId 15696061 Name Brownless Probability 99.9% Age 34 Balance 101633 Products 1 ActiveMember No Complain Yes Geography Germany Tenure 1 CreditScore 581
+2. CustomerId 15647311 Name Hill Probability 99.8% Age 41 Balance 83808 Products 1 ActiveMember Yes Complain Yes Geography Spain Tenure 1 CreditScore 608
+3. CustomerId 15586310 Name Ting Probability 99.4% Age 30 Balance 169462 Products 1 ActiveMember No Complain Yes Geography France Tenure 4 CreditScore 578
+4. CustomerId 15789484 Name Hammond Probability 98.1% Age 36 Balance 169831 Products 2 ActiveMember Yes Complain Yes Geography Germany Tenure 6 CreditScore 751
+5. CustomerId 15586914 Name Nepean Probability 98.0% Age 36 Balance 123841 Products 2 ActiveMember No Complain Yes Geography France Tenure 6 CreditScore 659
+
+Top 5 Least Likely to Churn:
+1. CustomerId 15799932 Name Iweobiegbunam Probability 0.0% Age 24 Balance 0 Products 2 ActiveMember Yes Complain No Geography France Tenure 10 CreditScore 812
+2. CustomerId 15782159 Name Ndubuagha Probability 0.0% Age 28 Balance 67640 Products 2 ActiveMember Yes Complain No Geography France Tenure 8 CreditScore 850
+3. CustomerId 15724527 Name Forbes Probability 0.0% Age 34 Balance 0 Products 2 ActiveMember Yes Complain No Geography France Tenure 9 CreditScore 825
+4. CustomerId 15693683 Name Yuille Probability 0.0% Age 29 Balance 97086 Products 2 ActiveMember Yes Complain No Geography Germany Tenure 8 CreditScore 814
+5. CustomerId 15743760 Name Davidson Probability 0.0% Age 31 Balance 131997 Products 2 ActiveMember Yes Complain No Geography France Tenure 6 CreditScore 850
+
+Key Factors Influencing Churn Predictions (Logistic Regression Coefficients, absolute magnitude):
+1. HasCrCard (positive coefficient 11.14) – customers with a credit card are more likely to churn.
+2. Balance (negative coefficient -2.31) – higher balance reduces churn risk.
+3. Surname (negative coefficient -1.52) – reflects encoded categorical effect.
+4. Age (negative coefficient -0.65) – older customers less likely to churn.
+5. Tenure (negative coefficient -0.49) – longer tenure reduces churn.
+6. EstimatedSalary (negative coefficient -0.24) – higher salary slightly reduces churn.
+7. CustomerId (positive coefficient 0.16) – identifier effect captured by model.
+8. IsActiveMember (positive coefficient 0.09) – active members slightly more likely to churn.
+9. CreditScore (positive coefficient 0.04) – higher credit score slightly increases churn.
+10. Geography (negative coefficient -0.03) – regional effect.
+
+These factors together drive the probability scores shown above.

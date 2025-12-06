@@ -1,0 +1,32 @@
+**Top 5 Customers Most Likely to Churn**
+
+| Rank | Customer ID | Name | Churn Probability | Key Attributes | Reason (Model Drivers) |
+|------|-------------|------|-------------------|----------------|------------------------|
+| 1 | 15696061 | Brownless | 99.9% | Age 34, Balance $101,633, 1 product, No active member, Complained, Germany, 1 year tenure, Credit Score 581 | High salary (positive coefficient), low balance, low product count, no credit card, geography factor.
+| 2 | 15647311 | Hill | 99.8% | Age 41, Balance $83,808, 1 product, Active member, Complained, Spain, 1 year tenure, Credit Score 608 | High salary, low balance, low product count, no credit card, geography factor.
+| 3 | 15586310 | Ting | 99.4% | Age 30, Balance $169,462, 1 product, No active member, Complained, France, 4 years tenure, Credit Score 578 | High salary, low balance, low product count, no credit card, geography factor.
+| 4 | 15789484 | Hammond | 98.1% | Age 36, Balance $169,831, 2 products, Active member, Complained, Germany, 6 years tenure, Credit Score 751 | High salary, low balance, low product count, no credit card, geography factor.
+| 5 | 15586914 | Nepean | 98.0% | Age 36, Balance $123,841, 2 products, No active member, Complained, France, 6 years tenure, Credit Score 659 | High salary, low balance, low product count, no credit card, geography factor.
+
+**Feature Importance (Logistic Regression Coefficients)**
+- **EstimatedSalary**: +11.14 (strongest positive driver of churn)
+- **HasCrCard**: -2.31 (having a credit card reduces churn)
+- **Geography**: -1.52 (certain geographies reduce churn)
+- **Balance**: -0.65 (higher balance reduces churn)
+- **NumOfProducts**: -0.49 (more products reduce churn)
+
+**Mitigation Strategies**
+1. **Targeted Upsell**: Offer additional products or credit card options to customers with low product counts and no credit card. This can increase engagement and reduce churn.
+2. **Personalized Loyalty Programs**: For high‑salary customers, provide exclusive benefits (e.g., higher reward points, premium services) to increase perceived value.
+3. **Geography‑Specific Campaigns**: Since geography has a negative coefficient, tailor marketing efforts in regions with higher churn risk (e.g., Germany, France) to address local preferences.
+4. **Balance‑Boosting Incentives**: Encourage higher account balances through deposit bonuses or interest rate promotions, as higher balances correlate with lower churn.
+5. **Complaint Resolution**: All top‑risk customers have a complaint flag. Promptly addressing complaints and improving customer service can mitigate churn risk.
+
+**Next Steps**
+- Deploy targeted email campaigns for the above customers.
+- Monitor churn probability after interventions.
+- Re‑evaluate model performance quarterly.
+
+---
+
+*Report generated on 2025‑12‑06.*

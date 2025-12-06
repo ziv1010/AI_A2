@@ -1,0 +1,38 @@
+{
+  "timestamp": "2025-12-06T14:49:07.603678",
+  "user_query": "give me the top 5 most likely to and why and what mitigations can we take",
+  "overall_status": "PASSED",
+  "overall_safety_score": 0.85,
+  "layers_evaluated": [
+    "input",
+    "output",
+    "hallucination"
+  ],
+  "strict_mode": false,
+  "input_validation": {
+    "is_valid": true,
+    "risk_level": "low",
+    "issues": []
+  },
+  "output_validation": {
+    "is_valid": true,
+    "confidence_score": 1.0,
+    "issues": []
+  },
+  "hallucination_check": {
+    "hallucination_score": 0.44999999999999996,
+    "recommendation": "verify",
+    "grounded_claims": [],
+    "ungrounded_claims": [],
+    "issues": [
+      "Number 99.4 not found in tool outputs",
+      "Number 98.1 not found in tool outputs",
+      "Number 0.49 not found in tool outputs"
+    ]
+  },
+  "all_issues": [
+    "Number 99.4 not found in tool outputs",
+    "Number 98.1 not found in tool outputs",
+    "Number 0.49 not found in tool outputs"
+  ]
+}

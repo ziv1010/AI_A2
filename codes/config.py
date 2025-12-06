@@ -37,7 +37,7 @@ def set_api_key(key: str):
 # MODEL CONFIGURATION (Token-efficient settings for free tier)
 # =============================================================================
 MODEL_CONFIG = {
-    "model_name": "meta-llama/llama-4-scout-17b-16e-instruct",  # Best free model on Groq
+    "model_name": "openai/gpt-oss-120b",  # Best free model on Groq
     "temperature": 0.1,  # Low temp for consistency
     "max_tokens": 1500,  # Conservative for free tier (6000 TPM limit)
     "timeout": 60,

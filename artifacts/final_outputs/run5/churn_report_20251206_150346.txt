@@ -1,0 +1,22 @@
+Top 5 Most Likely to Churn:
+1. ID: 15696061, Name: Brownless, Probability: 99.9%, Age: 34, Balance: 101633, Products: 1, Active: No, Complained: Yes, Geography: Germany, Tenure: 1, CreditScore: 581
+2. ID: 15647311, Name: Hill, Probability: 99.8%, Age: 41, Balance: 83808, Products: 1, Active: Yes, Complained: Yes, Geography: Spain, Tenure: 1, CreditScore: 608
+3. ID: 15586310, Name: Ting, Probability: 99.4%, Age: 30, Balance: 169462, Products: 1, Active: No, Complained: Yes, Geography: France, Tenure: 4, CreditScore: 578
+4. ID: 15789484, Name: Hammond, Probability: 98.1%, Age: 36, Balance: 169831, Products: 2, Active: Yes, Complained: Yes, Geography: Germany, Tenure: 6, CreditScore: 751
+5. ID: 15586914, Name: Nepean, Probability: 98.0%, Age: 36, Balance: 123841, Products: 2, Active: No, Complained: Yes, Geography: France, Tenure: 6, CreditScore: 659
+
+Top 5 Least Likely to Churn:
+1. ID: 15799932, Name: Iweobiegbunam, Probability: 0.0%, Age: 24, Balance: 0, Products: 2, Active: Yes, Complained: No, Geography: France, Tenure: 10, CreditScore: 812
+2. ID: 15782159, Name: Ndubuagha, Probability: 0.0%, Age: 28, Balance: 67640, Products: 2, Active: Yes, Complained: No, Geography: France, Tenure: 8, CreditScore: 850
+3. ID: 15724527, Name: Forbes, Probability: 0.0%, Age: 34, Balance: 0, Products: 2, Active: Yes, Complained: No, Geography: France, Tenure: 9, CreditScore: 825
+4. ID: 15693683, Name: Yuille, Probability: 0.0%, Age: 29, Balance: 97086, Products: 2, Active: Yes, Complained: No, Geography: Germany, Tenure: 8, CreditScore: 814
+5. ID: 15743760, Name: Davidson, Probability: 0.0%, Age: 31, Balance: 131997, Products: 2, Active: Yes, Complained: No, Geography: France, Tenure: 6, CreditScore: 850
+
+Key Factors Influencing Churn Predictions (based on model coefficients and domain knowledge):
+- "HasComplained" is the strongest positive driver of churn, increasing probability dramatically.
+- Short "Tenure" (especially 1‑2 years) is associated with higher churn risk.
+- Lower "CreditScore" correlates with higher churn.
+- Lower "Balance" and fewer "Products" slightly increase churn likelihood.
+- Being an "ActiveMember" reduces churn risk.
+
+These factors align with typical banking churn behavior where dissatisfied customers with short relationships and weaker financial profiles are more likely to leave.
