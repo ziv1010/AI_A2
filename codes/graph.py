@@ -21,6 +21,7 @@ from config import AGENT_CONFIG, RATE_LIMIT_CONFIG, DATA_DIR, ARTIFACTS_DIR
 from tools.data_tools import list_data_files, load_dataframe_head, get_dataframe_info, get_column_statistics
 from tools.code_executor import run_python, execute_code, run_code, reset_persistent_env
 from tools.artifact_tools import save_artifact, list_artifacts, read_artifact_text
+from tools.prediction_tools import get_high_risk_customers, get_low_risk_customers, analyze_churn_factors, predict_single_customer
 from guardrails.pipeline import GuardrailPipeline
 
 
@@ -30,80 +31,122 @@ from guardrails.pipeline import GuardrailPipeline
 
 PROFILER_TOOLS = [list_data_files, load_dataframe_head, get_dataframe_info, run_python]
 MODELER_TOOLS = [run_python, save_artifact, list_artifacts]
-ACTION_TOOLS = [run_python, save_artifact, list_artifacts, read_artifact_text]
+ACTION_TOOLS = [run_python, save_artifact, list_artifacts, read_artifact_text, get_high_risk_customers, get_low_risk_customers, analyze_churn_factors]
 
 
 # =============================================================================
 # SIMPLIFIED PROMPTS - Shorter and clearer for Groq
 # =============================================================================
 
-PROFILER_SYSTEM = f"""You are a Data Profiler. Analyze datasets for ML.
+PROFILER_SYSTEM = f"""You are a Data Profiler. Your ONLY job is to analyze and profile datasets for ML modeling.
 
 DATA LOCATION: {DATA_DIR}
 DATASET: Customer-Churn-Records.csv
+TARGET COLUMN: Exited (1 = churned, 0 = stayed)
+
+IMPORTANT: You are NOT responsible for making predictions or answering user questions about predictions.
+Your job is ONLY to profile the data so the Modeler can build a model.
+DO NOT try to identify specific customers who will churn - that is the Action agent's job AFTER the model is trained.
+
+IMPORTANT COLUMN MEANINGS:
+- RowNumber, CustomerId, Surname: ID columns (drop for modeling)
+- CreditScore: Higher = less likely to churn
+- Geography: France, Spain, Germany
+- Gender: Male/Female
+- Age: Older customers more loyal
+- Tenure: Years as customer (higher = more loyal)
+- Balance: Higher balance = less likely to churn
+- NumOfProducts: Products purchased (1-4)
+- HasCrCard: 1 = has credit card
+- IsActiveMember: 1 = active (less likely to churn)
+- EstimatedSalary: Annual salary
+- Complain: 1 = has complaint (STRONG churn indicator)
+- Satisfaction Score: 1-5 rating
+- Card Type: DIAMOND, GOLD, SILVER, PLATINUM
+- Point Earned: Loyalty points
 
 STEPS:
 1. First use list_data_files to see available files
 2. Use get_dataframe_info to understand the data structure
-3. Use run_python to analyze data quality
+3. Use run_python to analyze data quality and class distribution
 
 When using run_python, write simple Python code:
 ```python
 df = pd.read_csv(DATA_DIR / "Customer-Churn-Records.csv")
-print(df.shape)
-print(df.dtypes)
-print(df.isnull().sum())
+print(f"Dataset Name: Customer-Churn-Records.csv")
+print(f"Shape: {{df.shape}}")
+print(f"Target Column: Exited")
+print(f"Churn Rate: {{df['Exited'].mean()*100:.2f}}%")
+print(f"Feature Columns: {{[c for c in df.columns if c not in ['RowNumber', 'CustomerId', 'Surname', 'Exited']]}}")
 ```
 
-OUTPUT: Provide dataset name, shape, target column (Exited), feature columns, and data issues."""
+OUTPUT: Provide dataset name, shape, target column (Exited), feature columns, and data issues.
+DO NOT list specific customers or make predictions."""
 
 
-MODELER_SYSTEM = f"""You are an ML Modeler. Build and evaluate models.
+MODELER_SYSTEM = f"""You are an ML Modeler. Build and evaluate models for churn prediction.
 
 DATA LOCATION: {DATA_DIR}
 ARTIFACTS: {ARTIFACTS_DIR}
 
+YOUR TASK: Train machine learning models to predict customer churn.
+
 STEPS:
-1. Load and preprocess data
-2. Train 3 models: LogisticRegression, RandomForest, GradientBoosting
-3. Evaluate with accuracy, precision, recall, F1
-4. Save best model
+1. Use run_python to train and evaluate models
+2. Save the best model to artifacts
 
-Use run_python with code like:
-```python
-df = pd.read_csv(DATA_DIR / "Customer-Churn-Records.csv")
-# preprocessing
-X = df.drop(['Exited', 'RowNumber', 'CustomerId', 'Surname'], axis=1)
-y = df['Exited']
-# encode categoricals
-for col in X.select_dtypes(include=['object']).columns:
-    X[col] = LabelEncoder().fit_transform(X[col])
-# split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-# train model
-model = RandomForestClassifier(n_estimators=100, random_state=42)
-model.fit(X_train, y_train)
-y_pred = model.predict(X_test)
-print(f"Accuracy: {{accuracy_score(y_test, y_pred):.4f}}")
-print(f"F1: {{f1_score(y_test, y_pred):.4f}}")
-```
+SIMPLE CODE TO USE with run_python tool:
+- Load data from DATA_DIR / "Customer-Churn-Records.csv"
+- Target column is "Exited" (1=churned, 0=stayed)
+- Drop columns: RowNumber, CustomerId, Surname
+- Encode categorical columns (Geography, Gender, Card Type) using LabelEncoder
+- Train LogisticRegression, RandomForest, GradientBoosting
+- Evaluate each model with accuracy and F1 score
+- Save best model with: joblib.dump(best_model, ARTIFACTS_DIR / "best_model.joblib")
 
-OUTPUT: Model comparison table, best model name and metrics."""
+Keep your code simple and short. Avoid special characters.
+Print results clearly: model name, accuracy, F1 score.
+Save the best performing model to artifacts.
+
+OUTPUT: Report model comparison and which model was saved."""
 
 
-ACTION_SYSTEM = f"""You are an Insights Generator. Create business recommendations from ML results.
+ACTION_SYSTEM = f"""You are an Insights Generator. Your PRIMARY job is to ANSWER THE USER'S SPECIFIC QUESTION using the trained model.
 
+DATA: {DATA_DIR}
 ARTIFACTS: {ARTIFACTS_DIR}
 
-Based on model results, provide:
-1. Key factors driving churn
-2. Risk segments (High/Medium/Low)
-3. Specific recommendations per segment
-4. Business impact
+AVAILABLE TOOLS:
+- get_high_risk_customers(top_n=5): Get top N customers most likely to churn
+- get_low_risk_customers(top_n=5): Get top N customers least likely to churn
+- analyze_churn_factors(): Get feature importances and what drives churn
+- run_python: Run custom Python code for analysis
+- save_artifact: Save reports to artifacts folder
 
-Use run_python to analyze feature importance and create segments.
+CRITICAL: You MUST answer the user's specific question. If they ask for "top 5 most likely to churn and 5 least likely", use the tools to get BOTH lists.
 
-Save final report using save_artifact tool."""
+WORKFLOW:
+1. FIRST understand what the user is asking for
+2. Use the appropriate tools to get the specific data requested
+3. ANSWER THE SPECIFIC QUESTION with actual customer data
+4. Use analyze_churn_factors to explain what features drive the predictions
+5. Save a comprehensive final report
+
+EXAMPLE: If user asks "top 5 most likely and 5 least likely to churn + what factors":
+1. Call get_high_risk_customers(top_n=5) - gets 5 most likely to churn
+2. Call get_low_risk_customers(top_n=5) - gets 5 least likely to churn
+3. Call analyze_churn_factors() - explains the key drivers
+
+Then SUMMARIZE the results clearly for the user:
+- List each high-risk customer with ID, name, churn probability, key attributes
+- List each low-risk customer with same details
+- Explain the top factors driving these predictions (e.g., "Complain is the #1 factor at 45%")
+
+OUTPUT REQUIREMENTS:
+1. DIRECTLY ANSWER the user's question with SPECIFIC customer data
+2. Show actual customer IDs, names, probabilities, and details
+3. Explain what factors drove these predictions with actual percentages
+4. Save a comprehensive final report with all details to artifacts"""
 
 
 # =============================================================================
@@ -279,9 +322,13 @@ class AgenticPipeline:
         return ""
 
     def run_profiler(self, task: str = None) -> str:
-        """Run the profiler agent."""
-        if task is None:
-            task = "Analyze the Customer-Churn-Records.csv dataset. List files, check data structure, identify target and features."
+        """Run the profiler agent.
+        
+        Note: The profiler always uses a standard profiling task, regardless of user query.
+        The user's specific question is handled by the Action agent AFTER model training.
+        """
+        # Always use standard profiling task - user questions are handled in Phase 3
+        profiler_task = "Analyze the Customer-Churn-Records.csv dataset. List files, check data structure, identify target and features. DO NOT make predictions or identify specific customers."
 
         print("\n" + "="*60)
         print("PHASE 1: DATA PROFILING")
@@ -290,16 +337,16 @@ class AgenticPipeline:
         reset_persistent_env()
 
         if self.use_robust:
-            output = self._run_robust_agent(self.agents["profiler"], task)
+            output = self._run_robust_agent(self.agents["profiler"], profiler_task)
         else:
-            output = self._run_react_agent(self.agents["profiler"], task, "profiler-1")
+            output = self._run_react_agent(self.agents["profiler"], profiler_task, "profiler-1")
 
         self.results["profiler"] = output
         print(f"\nProfiler Output:\n{output[:1500]}...")
         return output
 
     def run_modeler(self, profiler_context: str) -> str:
-        """Run the modeler agent."""
+        """Run the modeler agent with fallback to direct training."""
         print("\n" + "="*60)
         print("PHASE 2: MODEL BUILDING")
         print("="*60)
@@ -316,17 +363,42 @@ Evaluate and compare models."""
         else:
             output = self._run_react_agent(self.agents["modeler"], task, "modeler-1")
 
+        # Check if model was saved - if not, fallback to direct training
+        model_path = ARTIFACTS_DIR / "best_model.joblib"
+        if not model_path.exists() or not output or output.strip() == "":
+            print("\n  LLM modeler failed or incomplete. Falling back to direct model training...")
+            output = run_modeling_directly()
+            print("  Direct training complete.")
+
         self.results["modeler"] = output
         print(f"\nModeler Output:\n{output[:1500]}...")
         return output
 
-    def run_action(self, modeler_context: str) -> str:
+    def run_action(self, modeler_context: str, user_query: str = None) -> str:
         """Run the action agent."""
         print("\n" + "="*60)
         print("PHASE 3: INSIGHTS & RECOMMENDATIONS")
         print("="*60)
 
-        task = f"""Based on modeling results:
+        # If user provided a specific query, include it prominently
+        if user_query:
+            task = f"""USER'S ORIGINAL QUESTION: {user_query}
+
+YOU MUST ANSWER THIS SPECIFIC QUESTION WITH ACTUAL DATA FROM THE MODEL.
+
+Context from modeling phase:
+{modeler_context[:800]}
+
+REQUIRED ACTIONS:
+1. Load the trained model from artifacts
+2. Run predictions on the full dataset
+3. ANSWER THE USER'S QUESTION with specific customer data
+4. Show the factors/features driving these predictions
+5. Save a comprehensive final report to artifacts
+
+DO NOT give generic insights. ANSWER THE SPECIFIC QUESTION."""
+        else:
+            task = f"""Based on modeling results:
 {modeler_context[:1000]}
 
 Generate:
@@ -350,9 +422,12 @@ Generate:
         print("AGENTIC AI PREDICTIVE ANALYTICS PIPELINE")
         print("#"*60)
 
+        # Store the original user query to pass to the action agent
+        user_query = task
+
         profiler_output = self.run_profiler(task)
         modeler_output = self.run_modeler(profiler_output)
-        action_output = self.run_action(modeler_output)
+        action_output = self.run_action(modeler_output, user_query)
 
         if self.use_guardrails and action_output:
             print("\n" + "="*60)
@@ -360,17 +435,81 @@ Generate:
             print("="*60)
 
             result = self.guardrail_pipeline.run_full_pipeline(
+                input_text=task,
                 output=action_output,
                 tool_outputs=[profiler_output, modeler_output],
             )
             print(self.guardrail_pipeline.get_summary(result))
             self.results["guardrails"] = result
 
+            # Save comprehensive guardrails report to artifacts
+            self._save_guardrails_artifact(result, task)
+
         print("\n" + "#"*60)
         print("PIPELINE COMPLETE")
         print("#"*60)
 
         return self.results
+
+    def _save_guardrails_artifact(self, result, task: str = None):
+        """Save comprehensive guardrails evaluation to artifacts."""
+        import json
+        from datetime import datetime
+
+        guardrails_report = {
+            "timestamp": datetime.now().isoformat(),
+            "user_query": task,
+            "overall_status": "PASSED" if result.passed else "FAILED",
+            "overall_safety_score": result.overall_score,
+            "layers_evaluated": result.metadata.get("layers_run", []),
+            "strict_mode": result.metadata.get("strict_mode", False),
+            "input_validation": None,
+            "output_validation": None,
+            "hallucination_check": None,
+            "all_issues": result.all_issues,
+        }
+
+        # Add input validation details
+        if result.input_result:
+            guardrails_report["input_validation"] = {
+                "is_valid": result.input_result.is_valid,
+                "risk_level": result.input_result.risk_level,
+                "issues": result.input_result.issues,
+            }
+
+        # Add output validation details
+        if result.output_result:
+            guardrails_report["output_validation"] = {
+                "is_valid": result.output_result.is_valid,
+                "confidence_score": result.output_result.confidence_score,
+                "issues": result.output_result.issues,
+            }
+
+        # Add hallucination check details
+        if result.hallucination_result:
+            guardrails_report["hallucination_check"] = {
+                "hallucination_score": result.hallucination_result.hallucination_score,
+                "recommendation": result.hallucination_result.recommendation,
+                "grounded_claims": result.hallucination_result.grounded_claims,
+                "ungrounded_claims": result.hallucination_result.ungrounded_claims,
+                "issues": result.hallucination_result.issues,
+            }
+
+        # Add code validation details if present
+        if result.code_result:
+            guardrails_report["code_validation"] = {
+                "is_valid": result.code_result.is_valid,
+                "risk_level": result.code_result.risk_level,
+                "issues": result.code_result.issues,
+            }
+
+        # Save to artifacts
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filepath = ARTIFACTS_DIR / f"guardrails_report_{timestamp}.json"
+        with open(filepath, 'w') as f:
+            json.dump(guardrails_report, f, indent=2, default=str)
+
+        print(f"\nGuardrails report saved to: {filepath}")
 
 
 # =============================================================================

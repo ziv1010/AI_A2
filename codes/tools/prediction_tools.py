@@ -258,11 +258,70 @@ def get_high_risk_customers(top_n: int = 10) -> str:
         # Get active customers only (not already churned)
         active = df[df['Exited'] == 0].nlargest(top_n, 'ChurnProb')
 
-        result = f"=== TOP {top_n} HIGH RISK CUSTOMERS ===\n\n"
+        result = f"=== TOP {top_n} HIGH RISK CUSTOMERS (Most Likely to Churn) ===\n\n"
         for i, (_, row) in enumerate(active.iterrows(), 1):
-            result += f"{i}. ID: {row['CustomerId']} | {row['Surname']}\n"
-            result += f"   Risk: {row['ChurnProb']*100:.1f}% | Age: {row['Age']} | Balance: ${row['Balance']:,.0f}\n"
-            result += f"   Active: {'Yes' if row['IsActiveMember'] else 'No'} | Complained: {'Yes' if row['Complain'] else 'No'}\n\n"
+            result += f"{i}. Customer ID: {row['CustomerId']} | Name: {row['Surname']}\n"
+            result += f"   Churn Probability: {row['ChurnProb']*100:.1f}%\n"
+            result += f"   Age: {row['Age']} | Balance: ${row['Balance']:,.0f} | Products: {row['NumOfProducts']}\n"
+            result += f"   Active Member: {'Yes' if row['IsActiveMember'] else 'No'} | Has Complained: {'Yes' if row['Complain'] else 'No'}\n"
+            result += f"   Geography: {row['Geography']} | Tenure: {row['Tenure']} years | Credit Score: {row['CreditScore']}\n\n"
+
+        return result
+
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+
+@tool
+def get_low_risk_customers(top_n: int = 10) -> str:
+    """
+    Get list of lowest risk customers who are least likely to churn.
+
+    Args:
+        top_n: Number of low risk customers to return (default 10)
+
+    Returns:
+        List of low-risk customers with their details.
+    """
+    try:
+        model, encoders, error = load_model_and_prepare()
+        if error:
+            return error
+
+        # Load data
+        df = pd.read_csv(DATA_DIR / "Customer-Churn-Records.csv")
+
+        # Prepare features
+        feature_cols = ['CreditScore', 'Geography', 'Gender', 'Age', 'Tenure',
+                       'Balance', 'NumOfProducts', 'HasCrCard', 'IsActiveMember',
+                       'EstimatedSalary', 'Complain', 'Satisfaction Score',
+                       'Card Type', 'Point Earned']
+
+        X = df[feature_cols].copy()
+
+        # Encode
+        for col, encoder in encoders.items():
+            if col in X.columns:
+                X[col] = encoder.transform(X[col])
+
+        # Get probabilities
+        if hasattr(model, 'predict_proba'):
+            probs = model.predict_proba(X)[:, 1]
+        else:
+            probs = model.predict(X)
+
+        df['ChurnProb'] = probs
+
+        # Get active customers only (not already churned), lowest risk
+        active = df[df['Exited'] == 0].nsmallest(top_n, 'ChurnProb')
+
+        result = f"=== TOP {top_n} LOW RISK CUSTOMERS (Least Likely to Churn) ===\n\n"
+        for i, (_, row) in enumerate(active.iterrows(), 1):
+            result += f"{i}. Customer ID: {row['CustomerId']} | Name: {row['Surname']}\n"
+            result += f"   Churn Probability: {row['ChurnProb']*100:.1f}%\n"
+            result += f"   Age: {row['Age']} | Balance: ${row['Balance']:,.0f} | Products: {row['NumOfProducts']}\n"
+            result += f"   Active Member: {'Yes' if row['IsActiveMember'] else 'No'} | Has Complained: {'Yes' if row['Complain'] else 'No'}\n"
+            result += f"   Geography: {row['Geography']} | Tenure: {row['Tenure']} years | Credit Score: {row['CreditScore']}\n\n"
 
         return result
 

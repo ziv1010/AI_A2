@@ -1,0 +1,30 @@
+{
+  "timestamp": "2025-12-06T14:01:34.274612",
+  "user_query": "give me the top 5 most likely to and 5 least likely to churn - also tell me which factors is this based on",
+  "overall_status": "PASSED",
+  "overall_safety_score": 1.0,
+  "layers_evaluated": [
+    "input",
+    "output",
+    "hallucination"
+  ],
+  "strict_mode": false,
+  "input_validation": {
+    "is_valid": true,
+    "risk_level": "low",
+    "issues": []
+  },
+  "output_validation": {
+    "is_valid": true,
+    "confidence_score": 1.0,
+    "issues": []
+  },
+  "hallucination_check": {
+    "hallucination_score": 0.0,
+    "recommendation": "accept",
+    "grounded_claims": [],
+    "ungrounded_claims": [],
+    "issues": []
+  },
+  "all_issues": []
+}
