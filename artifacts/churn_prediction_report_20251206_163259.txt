@@ -1,0 +1,33 @@
+Churn Prediction Report
+
+Top 5 Customers Most Likely to Churn (High Risk)
+1. Customer ID: 15696061 | Name: Brownless | Churn Probability: 99.9% | Age: 34 | Balance: $101,633 | Products: 1 | Active Member: No | Has Complained: Yes | Geography: Germany | Tenure: 1 year | Credit Score: 581
+2. Customer ID: 15647311 | Name: Hill | Churn Probability: 99.8% | Age: 41 | Balance: $83,808 | Products: 1 | Active Member: Yes | Has Complained: Yes | Geography: Spain | Tenure: 1 year | Credit Score: 608
+3. Customer ID: 15586310 | Name: Ting | Churn Probability: 99.4% | Age: 30 | Balance: $169,462 | Products: 1 | Active Member: No | Has Complained: Yes | Geography: France | Tenure: 4 years | Credit Score: 578
+4. Customer ID: 15789484 | Name: Hammond | Churn Probability: 98.1% | Age: 36 | Balance: $169,831 | Products: 2 | Active Member: Yes | Has Complained: Yes | Geography: Germany | Tenure: 6 years | Credit Score: 751
+5. Customer ID: 15586914 | Name: Nepean | Churn Probability: 98.0% | Age: 36 | Balance: $123,841 | Products: 2 | Active Member: No | Has Complained: Yes | Geography: France | Tenure: 6 years | Credit Score: 659
+
+Top 5 Customers Least Likely to Churn (Low Risk)
+1. Customer ID: 15799932 | Name: Iweobiegbunam | Churn Probability: 0.0% | Age: 24 | Balance: $0 | Products: 2 | Active Member: Yes | Has Complained: No | Geography: France | Tenure: 10 years | Credit Score: 812
+2. Customer ID: 15782159 | Name: Ndubuagha | Churn Probability: 0.0% | Age: 28 | Balance: $67,640 | Products: 2 | Active Member: Yes | Has Complained: No | Geography: France | Tenure: 8 years | Credit Score: 850
+3. Customer ID: 15724527 | Name: Forbes | Churn Probability: 0.0% | Age: 34 | Balance: $0 | Products: 2 | Active Member: Yes | Has Complained: No | Geography: France | Tenure: 9 years | Credit Score: 825
+4. Customer ID: 15693683 | Name: Yuille | Churn Probability: 0.0% | Age: 29 | Balance: $97,086 | Products: 2 | Active Member: Yes | Has Complained: No | Geography: Germany | Tenure: 8 years | Credit Score: 814
+5. Customer ID: 15743760 | Name: Davidson | Churn Probability: 0.0% | Age: 31 | Balance: $131,997 | Products: 2 | Active Member: Yes | Has Complained: No | Geography: France | Tenure: 6 years | Credit Score: 850
+
+Key Factors Driving Churn Predictions (Logistic Regression Coefficient Importance)
+- "Complain": 66.76% – Customers who have lodged a complaint are by far the strongest predictor of churn.
+- "IsActiveMember": 13.85% – Being an inactive member greatly increases churn risk.
+- "Gender": 9.11% – Gender shows a notable influence in the model.
+- "NumOfProducts": 3.90% – Fewer products held correlates with higher churn.
+- "HasCrCard": 2.95% – Not having a credit card slightly raises churn probability.
+- Additional factors (Card Type, Geography, Satisfaction Score, Age, Tenure) have smaller contributions.
+
+Actionable Recommendations to Reduce Churn for High‑Risk Customers
+1. **Address Complaints Promptly** – Since complaints dominate the risk, implement a rapid response team, offer personalized resolutions, and follow‑up to ensure satisfaction.
+2. **Re‑Engage Inactive Members** – Provide targeted incentives (e.g., fee waivers, bonus points) to reactivate dormant accounts.
+3. **Cross‑Sell Additional Products** – Encourage customers with only one product to adopt more services (e.g., credit card, savings account) to increase stickiness.
+4. **Tailor Communication by Gender** – Use gender‑aware messaging that resonates with each segment’s preferences.
+5. **Reward High‑Value, Loyal Customers** – For those with high credit scores and long tenure, offer loyalty bonuses to reinforce retention.
+6. **Monitor Satisfaction Scores** – Even though its impact is modest, improving satisfaction can further lower churn risk.
+
+By focusing on complaint resolution and re‑engagement of inactive members, the bank can address the two most influential drivers and substantially reduce churn among the identified high‑risk customers.

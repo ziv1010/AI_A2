@@ -1,0 +1,38 @@
+{
+  "timestamp": "2025-12-06T16:33:25.966086",
+  "user_query": "predict the topmost people who are most likely to churn - mention which factors are telling you this and how can we prevent this",
+  "overall_status": "PASSED",
+  "overall_safety_score": 0.85,
+  "layers_evaluated": [
+    "input",
+    "output",
+    "hallucination"
+  ],
+  "strict_mode": false,
+  "input_validation": {
+    "is_valid": true,
+    "risk_level": "low",
+    "issues": []
+  },
+  "output_validation": {
+    "is_valid": true,
+    "confidence_score": 1.0,
+    "issues": []
+  },
+  "hallucination_check": {
+    "hallucination_score": 0.44999999999999996,
+    "recommendation": "verify",
+    "grounded_claims": [],
+    "ungrounded_claims": [],
+    "issues": [
+      "Number 98.0 not found in tool outputs",
+      "Number 99.8 not found in tool outputs",
+      "Number 3.90 not found in tool outputs"
+    ]
+  },
+  "all_issues": [
+    "Number 98.0 not found in tool outputs",
+    "Number 99.8 not found in tool outputs",
+    "Number 3.90 not found in tool outputs"
+  ]
+}
